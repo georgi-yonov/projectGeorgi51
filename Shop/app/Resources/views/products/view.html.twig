@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block main %}
+
+    <div class="container body-content">
+        <div class="row">
+            <div class="col-md-12">
+                <product>
+                    <header>
+                        <h2>{{ product.category }}</h2>
+                    </header>
+
+                    <p>
+                        {{ product.name }}
+                    </p>
+
+                    <p>
+                        <img src="{{ product.imageURL }}" width="200" height="150">
+                    </p>
+
+                    <p>
+                        {{ product.description }}
+                    </p>
+
+                    <p>
+                        {{ product.price }}
+                    </p>
+
+                    <small class="author">
+                        {{ product.author.lastName }}
+                    </small>
+
+                    <footer>
+                        <div class="pull-right">
+                            <a class="btn btn-success btn-xs" href="{{ path('product_edit', {id: product.id}) }}">Edit</a>
+                            <a class="btn btn-danger btn-xs" href="{{ path('product_delete', {id: product.id}) }}">Delete</a>
+                            <a class="btn btn-default btn-xs" href="{{ path('shop_index') }}">back &raquo;</a>
+                        </div>
+                    </footer>
+                </product>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
