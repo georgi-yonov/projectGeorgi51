@@ -3,6 +3,7 @@
 namespace OnlineShopBundle\Controller;
 
 use mysql_xdevapi\Exception;
+use OnlineShopBundle\Entity\Role;
 use OnlineShopBundle\Entity\User;
 use OnlineShopBundle\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -27,7 +28,16 @@ class UserController extends Controller
                 $this->get('security.password_encoder')
                 ->encodePassword($user, $user->getPassword());
 
+            $roleUSer = $this
+                ->getDoctrine()
+                ->getRepository(Role::class)
+                ->findOneBy(['name' => 'ROLE_USER']);
+
+            $user->addRole($roleUSer);
+
+
             $user->setPassword($passwordHash);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();

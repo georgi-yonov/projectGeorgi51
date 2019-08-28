@@ -93,9 +93,31 @@ class User implements UserInterface
      */
     private $products;
 
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="OnlineShopBundle\Entity\Role")
+     * @ORM\JoinTable(name="users_roles",
+     *     joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *     inverseJoinColumns={@ORM\JoinColumn(name="role_id", referencedColumnName="id")}
+     *     )
+     */
+    private $roles;
+
+    /**
+     * @param Role $role
+     * @return User
+     */
+    public function addRole(Role $role)
+    {
+        $this->roles[] = $role;
+        return $this;
+    }
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     /**
@@ -340,7 +362,14 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        return [];
+       $stringRoles = [];
+
+       /** @var Role $role */
+        foreach ($this->roles as $role) {
+            $stringRoles[] = $role->getRole();
+       }
+
+        return $stringRoles;
     }
 
     /**
@@ -394,5 +423,19 @@ class User implements UserInterface
 
         return $this;
     }
+
+    public function isAuthor(Product $product)
+    {
+        return $product->getAuthor()->getId() === $this->getId();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return in_array("ROLE_ADMIN", $this->getRoles());
+    }
+
 }
 

@@ -4,6 +4,7 @@ namespace OnlineShopBundle\Controller;
 
 use OnlineShopBundle\Entity\Category;
 use OnlineShopBundle\Entity\Product;
+use OnlineShopBundle\Entity\User;
 use OnlineShopBundle\Form\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -59,6 +60,19 @@ class ProductController extends Controller
             ->getDoctrine()
             ->getRepository(Product::class)
             ->find($id);
+
+        if(null === $product) {
+            return $this->redirectToRoute("shop_index");
+        }
+
+        /** @var User $currentUser */
+        $currentUser = $this->getUser();
+        
+        if(!$currentUser->isAuthor($product) && !$currentUser->isAdmin()){
+        return $this->redirectToRoute("shop_index");
+    }
+
+
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
@@ -87,12 +101,21 @@ class ProductController extends Controller
      * @param $id
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function delete(Request $request, $id)
+    public function delete(Request $request, int $id)
     {
         $product = $this
             ->getDoctrine()
             ->getRepository(Product::class)
             ->find($id);
+
+        if(null === $product) {
+            return $this->redirectToRoute("shop_index");
+        }
+
+        if(!$this->isAuthorOrAdmin($product)){
+            return $this->redirectToRoute("shop_index");
+        }
+
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
@@ -126,10 +149,27 @@ class ProductController extends Controller
             ->getRepository(Product::class)
             ->find($id);
 
-
+    if(null === $product){
+        return $this->redirectToRoute("shop_index");
+    }
 
         return $this->render("products/view.html.twig",
             ['product' => $product]);
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    private function isAuthorOrAdmin(Product $product)
+    {
+        /** @var  User $currentUser */
+        $currentUser = $this->getUser();
+
+        if(!$currentUser->isAuthor($product) && !$currentUser->isAdmin()){
+                return false;
+        }
+        return true;
     }
 
 }
