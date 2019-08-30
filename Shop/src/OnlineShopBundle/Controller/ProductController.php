@@ -8,6 +8,8 @@ use OnlineShopBundle\Entity\User;
 use OnlineShopBundle\Form\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -33,6 +35,8 @@ class ProductController extends Controller
 
         if($form->isSubmitted())
         {
+            $this->uploadFile($form, $product);
+
             $product->setAuthor($this->getUser());
            $em = $this->getDoctrine()->getManager();
            $em->persist($product);
@@ -68,7 +72,7 @@ class ProductController extends Controller
         /** @var User $currentUser */
         $currentUser = $this->getUser();
         
-        if(!$currentUser->isAuthor($product) && !$currentUser->isAdmin()){
+        if(!$currentUser->isAdmin()){
         return $this->redirectToRoute("shop_index");
     }
 
@@ -78,10 +82,10 @@ class ProductController extends Controller
 
         if($form->isSubmitted())
         {
+            $this->uploadFile($form, $product);
             $em = $this->getDoctrine()->getManager();
             $em->merge($product);
             $em->flush();
-
             return $this->redirectToRoute("shop_index");
         }
 
@@ -112,13 +116,13 @@ class ProductController extends Controller
             return $this->redirectToRoute("shop_index");
         }
 
-        if(!$this->isAuthorOrAdmin($product)){
+        if(!$this->isAdmin($product)){
             return $this->redirectToRoute("shop_index");
         }
 
         $form = $this->createForm(ProductType::class, $product);
+        $form->remove('image');
         $form->handleRequest($request);
-
         if($form->isSubmitted())
         {
             $em = $this->getDoctrine()->getManager();
@@ -161,15 +165,54 @@ class ProductController extends Controller
      * @param Product $product
      * @return bool
      */
-    private function isAuthorOrAdmin(Product $product)
+    private function isAdmin(Product $product)
     {
         /** @var  User $currentUser */
         $currentUser = $this->getUser();
 
-        if(!$currentUser->isAuthor($product) && !$currentUser->isAdmin()){
+        if(!$currentUser->isAdmin()){
                 return false;
         }
         return true;
+    }
+
+
+    /**
+     * @Route("/add/{id}", name="add_to_cart")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function AddToCart(Request $request, $id)
+    {
+        $user = $this->getUser();
+
+        $product = $this
+            ->getDoctrine()
+            ->getRepository(Product::class)
+            ->find($id);
+
+        return $this->redirectToRoute("shop_index");
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormInterface $form
+     * @param Product $product
+     */
+    public function uploadFile(FormInterface $form, Product $product)
+    {
+        /** @var UploadedFile $file */
+        $file = $form['image']->getData();
+
+        $fileName = md5(uniqid()) . '.' . $file->guessExtension();
+
+        if ($file) {
+            $file->move(
+                $this->getParameter('product_directory'),
+                $fileName
+            );
+
+            $product->setImage($fileName);
+        }
     }
 
 }

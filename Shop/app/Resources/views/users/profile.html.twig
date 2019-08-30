@@ -2,7 +2,7 @@
 
 {% block main %}
 
-    <h1>Hello {{ user.email }}</h1><br />
+    <h1>Hello {{ user.firstName }} {{ user.lastName }}!</h1><br />
 
     <h3>First Name: {{ user.firstName }}</h3>
 
@@ -19,5 +19,7 @@
     <h3>Post Code: {{ user.postCode }}</h3>
 
     <h3>Region: {{ user.region }}</h3>
+
+
 
 {% endblock %}

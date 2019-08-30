@@ -17,7 +17,7 @@
                         </p>
 
                         <p>
-                            <img src="{{ product.imageURL }}" width="200" height="150">
+                            <img src="{{ asset('uploads/' ~ product.image) }}" width="200" height="150">
                         </p>
 
                         <p>
@@ -25,18 +25,13 @@
                         </p>
 
                         <p>
-                            {{ product.price }}
+                            {{ product.price }} BGN
                         </p>
-
-                        <small class="author">
-                            {{ product.author.lastName }}
-                        </small>
-
 
                         <footer>
                             <div class="pull-right">
-                                <a class="btn btn-default btn-xs"
-                                   href="{{ path('product_view', {id: product.id}) }}">Read more &raquo;</a>
+                                    <a class="btn btn-info btn-xs" href="{{ path('add_to_cart', {id: product.id}) }}">Add to cart</a>
+                                   <a class="btn btn-default btn-xs" href="{{ path('product_view', {id: product.id}) }}">Read more &raquo;</a>
                             </div>
                         </footer>
                     </product>

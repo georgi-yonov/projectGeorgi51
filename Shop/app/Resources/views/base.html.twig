@@ -47,11 +47,13 @@
                         My Profile
                         </a>
                         </li>
+                        {% if app.getUser().isAdmin() %}
                         <li>
                         <a href="{{ path('product_create') }}" class="navbar-brand">
                         Products
                         </a>
                         </li>
+                            {% endif %}
                         <li>
                         <a href="{{ path('security_logout') }}" class="navbar-brand">
                         Logout
@@ -69,6 +71,13 @@
                         </a>
                         </li>
                         {% endif %}
+                        <li>
+                            <a href="{{ path('shop_index') }}">
+                                <img class="rounded-circle"
+                                     src="{{ asset('logo/imageCart.png') }}"
+                                     width="50px" height="20px"/>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>

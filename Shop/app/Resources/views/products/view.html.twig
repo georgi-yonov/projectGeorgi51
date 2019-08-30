@@ -15,7 +15,7 @@
                     </p>
 
                     <p>
-                        <img src="{{ product.imageURL }}" width="200" height="150">
+                        <img src="{{ asset('uploads/' ~ product.image) }}" width="200" height="150">
                     </p>
 
                     <p>
@@ -32,10 +32,11 @@
 
                     <footer>
                         <div class="pull-right">
-                            {% if app.getUser() and (app.getUser().isAuthor(product) or app.getUser().isAdmin() ) %}
+                            {% if app.getUser().isAdmin() %}
                             <a class="btn btn-success btn-xs" href="{{ path('product_edit', {id: product.id}) }}">Edit</a>
                             <a class="btn btn-danger btn-xs" href="{{ path('product_delete', {id: product.id}) }}">Delete</a>
                             {% endif %}
+                            <a class="btn btn-info btn-xs" href="{{ path('add_to_cart', {id: product.id}) }}">Add to cart</a>
                             <a class="btn btn-default btn-xs" href="{{ path('shop_index') }}">back &raquo;</a>
                         </div>
                     </footer>

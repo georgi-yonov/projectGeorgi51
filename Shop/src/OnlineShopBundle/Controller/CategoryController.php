@@ -22,7 +22,12 @@ class CategoryController extends Controller
                 ['category' => $id]
             );
 
-        return $this->render('category/products.html.twig',
-            ['products' => $products]);
+        if(empty($products)){
+            return $this->render('category/empty.html.twig');
+        }else {
+            return $this->render('category/products.html.twig',
+                ['products' => $products]);
+        }
+
     }
 }

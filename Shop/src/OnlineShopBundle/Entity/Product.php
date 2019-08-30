@@ -31,9 +31,25 @@ class Product
     /**
      * @var string
      *
-     * @ORM\Column(name="imageURL", type="string", length=255)
+     * @ORM\Column(name="image", type="string", length=255)
      */
-    private $imageURL;
+    private $image;
+
+    /**
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param string $image
+     */
+    public function setImage(string $image)
+    {
+        $this->image = $image;
+    }
 
     /**
      * @var string
@@ -100,29 +116,8 @@ class Product
         return $this->name;
     }
 
-    /**
-     * Set imageURL
-     *
-     * @param string $imageURL
-     *
-     * @return Product
-     */
-    public function setImageURL($imageURL)
-    {
-        $this->imageURL = $imageURL;
 
-        return $this;
-    }
 
-    /**
-     * Get imageURL
-     *
-     * @return string
-     */
-    public function getImageURL()
-    {
-        return $this->imageURL;
-    }
 
     /**
      * Set description
