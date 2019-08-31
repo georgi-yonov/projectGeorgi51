@@ -3,6 +3,7 @@
 namespace OnlineShopBundle\Controller;
 
 use OnlineShopBundle\Entity\Category;
+use OnlineShopBundle\Entity\Likes;
 use OnlineShopBundle\Entity\Product;
 use OnlineShopBundle\Entity\User;
 use OnlineShopBundle\Form\ProductType;
@@ -177,22 +178,6 @@ class ProductController extends Controller
     }
 
 
-    /**
-     * @Route("/add/{id}", name="add_to_cart")
-     * @param $id
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function AddToCart(Request $request, $id)
-    {
-        $user = $this->getUser();
-
-        $product = $this
-            ->getDoctrine()
-            ->getRepository(Product::class)
-            ->find($id);
-
-        return $this->redirectToRoute("shop_index");
-    }
 
     /**
      * @param \Symfony\Component\Form\FormInterface $form
@@ -214,5 +199,77 @@ class ProductController extends Controller
             $product->setImage($fileName);
         }
     }
+
+    /**
+     * @Route("/add/{id}", name="like")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function Like(Request $request, $id)
+    {
+        $user = $this->getUser();
+
+        $product = $this
+            ->getDoctrine()
+            ->getRepository(Product::class)
+            ->find($id);
+        $value1 = $user->getId();
+        $value2 = $product->getId();
+        $count=0;
+        $likes = $this->getDoctrine()->getRepository(Likes::class)->findAll();
+//        var_dump($likes);
+
+        foreach($likes as $k=>$like) {
+            if ($value1==$like->getUserId()) {$count++;}
+        }
+
+        foreach ($likes as $k=>$like) {
+//          var_dump($like->getUserId());
+//          var_dump($like->getProductId());
+          if ($value1==$like->getUserId() && $value2==$like->getProductId())
+          {
+//              echo "Съвпада\n";
+              return $this->render("proba/proba.html.twig",
+                  ['count' => $count]);
+          }
+
+        }
+
+
+$likes = new Likes();
+
+$likes->setUserId($value1);
+$likes->setProductId($value2);
+$em = $this->getDoctrine()->getManager();
+$em->persist($likes);
+$em->flush();
+       // echo $count;
+
+        return $this->render("proba/proba.html.twig",
+            ['count' => $count + 1]);
+
+    }
+
+
+
+
+    /**
+     * @Route("/add/{id}", name="add_to_cart")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function AddToCart(Request $request, $id)
+    {
+        $user = $this->getUser();
+
+        $product = $this
+            ->getDoctrine()
+            ->getRepository(Product::class)
+            ->find($id);
+
+        return $this->redirectToRoute("shop_index");
+    }
+
+
 
 }

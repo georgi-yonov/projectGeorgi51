@@ -39,6 +39,14 @@ class User implements UserInterface
     private $firstName;
 
     /**
+     *
+     * @Assert\Length(
+     *      min = 10,
+     *      max = 25,
+     *      minMessage = "min = 10",
+     *      maxMessage = "max = 25"
+     * )
+     *
      * @var string
      *
      * @ORM\Column(name="lastName", type="string", length=255)
